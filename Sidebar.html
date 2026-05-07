@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  @font-face {
+    font-family: 'Angsana New';
+    src: local('Angsana New'), local('AngsanaNew');
+  }
+
+  :root {
+    --navy:      #0a2351;
+    --blue:      #1746a2;
+    --blue-mid:  #1e5cc8;
+    --blue-lt:   #c8dcf5;
+    --blue-xlt:  #e8f1fb;
+    --white:     #ffffff;
+    --gray-50:   #f4f7fc;
+    --gray-100:  #e8eef8;
+    --gray-200:  #cdd8ed;
+    --gray-400:  #7a90ba;
+    --gray-600:  #354d80;
+    --gray-800:  #0f1f45;
+    --red:       #9b1c1c;
+    --red-lt:    #fde8e8;
+    --green:     #14532d;
+    --green-lt:  #d1fae5;
+    --amber:     #92400e;
+    --amber-lt:  #fef3c7;
+    --sidebar-w: 72px;
+    --radius:    10px;
+    --font:      'Angsana New', 'TH Sarabun New', 'Cordia New', serif;
+    --fs: 20px;
+    --fs-sm: 20px;
+    --fs-xs: 20px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    font-size: var(--fs);
+    background: var(--gray-100);
+    color: var(--gray-800);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    line-height: 1.55;
+  }
+
+  /* ═══════════════════════════════
+     LEFT NAVIGATION RAIL
+  ═══════════════════════════════ */
+  .nav-rail {
+    width: var(--sidebar-w);
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    gap: 4px;
+    flex-shrink: 0;
+    box-shadow: 2px 0 12px rgba(13,43,94,.25);
+    position: relative;
+    z-index: 20;
+  }
+
+  .nav-logo {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(26,86,219,.4);
+  }
+
+  .nav-item {
+    width: 48px; height: 48px;
+    border-radius: 10px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    color: rgba(255,255,255,.45);
+    transition: all .2s;
+    position: relative;
+    border: none; background: transparent;
+    font-family: var(--font);
+    gap: 2px;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,.08);
+    color: rgba(255,255,255,.8);
+  }
+
+  .nav-item.active {
+    background: var(--blue);
+    color: white;
+    box-shadow: 0 2px 10px rgba(26,86,219,.5);
+  }
+
+  .nav-item i { font-size: 20px; }
+  .nav-item span { font-size: 20px; font-weight: 700; letter-spacing: .3px; font-family: var(--font); }
+
+  .nav-divider {
+    width: 28px; height: 1px;
+    background: rgba(255,255,255,.1);
+    margin: 4px 0;
+  }
+
+  .nav-spacer { flex: 1; }
+
+  /* ═══════════════════════════════
+     CONTENT AREA
+  ═══════════════════════════════ */
+  .content-area {
+    flex: 1;
+    overflow: hidden;
+    background: var(--gray-50);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .content-scroll::-webkit-scrollbar { width: 4px; }
+  .content-scroll::-webkit-scrollbar-track { background: transparent; }
+  .content-scroll::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+
+  /* ═══════════════════════════════
+     PANEL HEADER
+  ═══════════════════════════════ */
+  .panel-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 14px 16px 10px;
+    position: sticky; top: 0; z-index: 10;
+  }
+
+  .panel-title {
+    font-size: 20px; font-weight: 700;
+    color: var(--navy); letter-spacing: -.2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .panel-title i {
+    color: var(--blue); font-size: 20px;
+  }
+
+  .panel-subtitle {
+    font-size: 20px; color: var(--gray-400);
+    margin-top: 2px; font-weight: 400;
+  }
+
+  /* ═══════════════════════════════
+     PANELS
+  ═══════════════════════════════ */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .panel-body { padding: 14px 14px; }
+
+  /* ═══════════════════════════════
+     SECTION LABEL
+  ═══════════════════════════════ */
+  .section-label {
+    font-size: 20px; font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 14px 0 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--gray-200);
+  }
+
+  /* ═══════════════════════════════
+     SUMMARY CARDS
+  ═══════════════════════════════ */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .s-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    border: 1px solid var(--gray-200);
+    border-top: 3px solid;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    transition: box-shadow .2s;
+  }
+  .s-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .s-card.sick     { border-top-color: var(--red); }
+  .s-card.paid     { border-top-color: var(--green); }
+  .s-card.unpaid   { border-top-color: var(--amber); }
+  .s-card.vacation { border-top-color: var(--blue); }
+
+  .s-icon { font-size: 20px; margin-bottom: 4px; }
+  .s-label { font-size: 20px; color: var(--gray-400); font-weight: 600; }
+  .s-value { font-size: 20px; font-weight: 700; line-height: 1.1; margin: 1px 0; }
+  .s-card.sick     .s-value { color: var(--red); }
+  .s-card.paid     .s-value { color: var(--green); }
+  .s-card.unpaid   .s-value { color: var(--amber); }
+  .s-card.vacation .s-value { color: var(--blue); }
+  .s-sub { font-size: 20px; color: var(--gray-400); }
+
+  /* ═══════════════════════════════
+     FORM ELEMENTS
+  ═══════════════════════════════ */
+  .form-group { margin-bottom: 10px; }
+
+  .form-label {
+    font-size: 20px; font-weight: 700;
+    color: var(--gray-600);
+    margin-bottom: 5px; display: block;
+    letter-spacing: .2px;
+  }
+
+  input[type="date"], select, textarea {
+    width: 100%; padding: 8px 10px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px; font-size: var(--fs);
+    font-family: var(--font);
+    outline: none; background: var(--white);
+    color: var(--gray-800);
+    transition: border .15s, box-shadow .15s;
+  }
+  input[type="date"]:focus,
+  select:focus, textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(26,86,219,.1);
+  }
+  textarea { height: 60px; resize: none; line-height: 1.5; }
+
+  /* ═══════════════════════════════
+     TYPE BUTTONS
+  ═══════════════════════════════ */
+  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+  .type-btn {
+    padding: 8px 6px; border: 1.5px solid var(--gray-200);
+    border-radius: 8px; background: var(--white); cursor: pointer;
+    text-align: center; font-size: var(--fs);
+    font-family: var(--font);
+    transition: all .15s; color: var(--gray-600);
+    font-weight: 700; line-height: 1.4;
+  }
+  .type-btn:hover { border-color: var(--blue-mid); color: var(--blue-mid); background: var(--blue-xlt); }
+
+  .type-btn.selected { color: var(--white); border-color: transparent; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+  .type-btn.sick.selected     { background: var(--red); }
+  .type-btn.paid.selected     { background: var(--green); }
+  .type-btn.unpaid.selected   { background: var(--amber); }
+  .type-btn.vacation.selected { background: var(--blue); }
+
+  /* ═══════════════════════════════
+     DURATION SELECTOR
+  ═══════════════════════════════ */
+  .dur-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
+
+  .custom-hour-wrap {
+    display: none; margin-top: 8px;
+    background: var(--blue-xlt); border-radius: 8px; padding: 8px 10px;
+    border: 1px solid var(--blue-lt);
+  }
+  .custom-hour-row { display: flex; align-items: center; gap: 8px; }
+  .hour-input {
+    width: 64px; padding: 6px 8px; border: 1.5px solid var(--blue-lt);
+    border-radius: 6px; font-size: 20px; text-align: center;
+    font-family: 'Sarabun', sans-serif; outline: none; background: white;
+  }
+  .hour-input:focus { border-color: var(--blue); }
+  .hour-preview { font-size: 20px; color: var(--blue); font-weight: 600; }
+  .hour-note { font-size: 20px; color: var(--gray-400); margin-top: 4px; }
+
+  /* ═══════════════════════════════
+     SAVE BUTTON
+  ═══════════════════════════════ */
+  .btn-primary {
+    width: 100%; padding: 10px;
+    background: var(--blue); color: white;
+    border: none; border-radius: 8px;
+    font-size: var(--fs); font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer; margin-top: 12px;
+    transition: all .15s;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 8px rgba(23,70,162,.3);
+  }
+  .btn-primary:hover { background: #123a8a; box-shadow: 0 4px 14px rgba(23,70,162,.4); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { background: var(--gray-400); box-shadow: none; transform: none; cursor: default; }
+
+  .btn-outline {
+    width: 100%; padding: 9px;
+    background: white; color: var(--blue);
+    border: 1.5px solid var(--blue);
+    border-radius: 8px; font-size: var(--fs); font-weight: 700;
+    font-family: var(--font); cursor: pointer; margin-top: 8px;
+    transition: all .15s;
+  }
+  .btn-outline:hover { background: var(--blue-xlt); }
+
+  .btn-green {
+    width: 100%; padding: 9px;
+    background: var(--green); color: white;
+    border: none; border-radius: 8px;
+    font-size: var(--fs); font-weight: 700;
+    font-family: var(--font); cursor: pointer; margin-top: 6px;
+    transition: all .15s;
+  }
+  .btn-green:hover { background: #0d3d1e; }
+  .btn-green:disabled { background: var(--gray-400); cursor: default; }
+
+  /* ═══════════════════════════════
+     HISTORY ITEMS
+  ═══════════════════════════════ */
+  .history-item {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    border: 1px solid var(--gray-200);
+    border-left: 3px solid;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    transition: box-shadow .15s;
+  }
+  .history-item:hover { box-shadow: 0 3px 10px rgba(0,0,0,.08); }
+  .history-item.sick     { border-left-color: var(--red); }
+  .history-item.paid     { border-left-color: var(--green); }
+  .history-item.unpaid   { border-left-color: var(--amber); }
+  .history-item.vacation { border-left-color: var(--blue); }
+
+  .hi-date { font-size: 20px; color: var(--gray-400); font-weight: 500; }
+  .hi-type { font-size: var(--fs); font-weight: 700; color: var(--gray-800); margin: 2px 0; }
+  .hi-note { font-size: 20px; color: var(--gray-600); }
+
+  .action-btn {
+    border: none; border-radius: 5px; padding: 4px 10px;
+    font-size: 20px; font-weight: 700; cursor: pointer;
+    font-family: var(--font); transition: all .15s;
+  }
+  .btn-edit   { background: var(--blue-lt); color: var(--blue); }
+  .btn-edit:hover { background: #bfdbfe; }
+  .btn-delete { background: var(--red-lt); color: var(--red); }
+  .btn-delete:hover { background: #fecaca; }
+
+  /* ═══════════════════════════════
+     FULL SUMMARY CARDS
+  ═══════════════════════════════ */
+  .full-card {
+    background: var(--white); border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    padding: 12px 14px; margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .full-card-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 8px;
+  }
+  .full-card-title { font-weight: 700; font-size: 20px; }
+  .full-card-quota { font-size: 20px; color: var(--gray-400); }
+  .full-card-nums { display: flex; gap: 16px; margin-bottom: 6px; }
+  .fc-num-label { font-size: 20px; color: var(--gray-400); text-transform: uppercase; letter-spacing: .5px; }
+  .fc-num-val { font-size: 20px; font-weight: 700; }
+
+  .prog-bar { background: var(--gray-200); border-radius: 4px; height: 5px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+
+  /* ═══════════════════════════════
+     BONUS TAB
+  ═══════════════════════════════ */
+  .bonus-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue-mid) 100%);
+    border-radius: 12px; padding: 18px 16px;
+    text-align: center; color: white;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 20px rgba(13,43,94,.3);
+    position: relative; overflow: hidden;
+  }
+  .bonus-hero::before {
+    content: '';
+    position: absolute; top: -30px; right: -30px;
+    width: 100px; height: 100px;
+    background: rgba(255,255,255,.06);
+    border-radius: 50%;
+  }
+  .bonus-hero::after {
+    content: '';
+    position: absolute; bottom: -20px; left: -20px;
+    width: 70px; height: 70px;
+    background: rgba(255,255,255,.04);
+    border-radius: 50%;
+  }
+
+  .bonus-subtitle { font-size: 20px; opacity: .7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .bonus-pct { font-size: 20px; font-weight: 700; line-height: 1; letter-spacing: -2px; }
+  .bonus-pct-label { font-size: 20px; opacity: .75; margin-top: 2px; }
+  .bonus-badge {
+    display: inline-block; padding: 3px 14px;
+    border-radius: 20px; font-size: 20px; font-weight: 700;
+    margin-top: 8px; background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.25);
+    letter-spacing: .5px;
+  }
+  .bonus-desc { font-size: 20px; opacity: .85; margin-top: 6px; line-height: 1.5; }
+
+  .bonus-prog-wrap {
+    background: var(--gray-200); border-radius: 6px; height: 8px;
+    overflow: hidden; margin: 10px 0 4px;
+  }
+  .bonus-prog-fill { height: 100%; border-radius: 6px; transition: width .8s ease; }
+  .fill-A { background: linear-gradient(90deg, #16a34a, #22c55e); }
+  .fill-B { background: linear-gradient(90deg, #d97706, #f59e0b); }
+  .fill-C { background: linear-gradient(90deg, #ea580c, #f97316); }
+  .fill-D { background: linear-gradient(90deg, #dc2626, #ef4444); }
+
+  .prog-labels {
+    display: flex; justify-content: space-between;
+    font-size: 20px; color: var(--gray-400); margin-bottom: 12px;
+  }
+
+  .stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .stat-box {
+    background: var(--white); border-radius: 8px; padding: 8px;
+    text-align: center; border: 1px solid var(--gray-200);
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .stat-num { font-size: 20px; font-weight: 700; color: var(--blue); }
+  .stat-lbl { font-size: 20px; color: var(--gray-400); margin-top: 1px; }
+
+  .cond-list { display: flex; flex-direction: column; gap: 5px; }
+  .cond-item {
+    background: var(--white); border-radius: 8px; padding: 8px 12px;
+    border: 1px solid var(--gray-200);
+    display: flex; justify-content: space-between; align-items: center;
+    border-left: 3px solid;
+  }
+  .cond-item.c-A { border-left-color: var(--green); }
+  .cond-item.c-B { border-left-color: var(--amber); }
+  .cond-item.c-C { border-left-color: #c2410c; }
+  .cond-item.c-D { border-left-color: var(--red); }
+  .cond-text { font-size: 20px; color: var(--gray-600); }
+  .cond-badge { font-size: 20px; font-weight: 700; }
+  .cond-item.c-A .cond-badge { color: var(--green); }
+  .cond-item.c-B .cond-badge { color: var(--amber); }
+  .cond-item.c-C .cond-badge { color: #c2410c; }
+  .cond-item.c-D .cond-badge { color: var(--red); }
+
+  .hist-item {
+    background: var(--white); border-radius: 8px; padding: 8px 12px;
+    margin-bottom: 5px; border: 1px solid var(--gray-200);
+    border-left: 3px solid var(--blue);
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
+  }
+  .hist-time { font-size: 20px; color: var(--gray-400); }
+  .hist-level { font-size: 20px; font-weight: 700; margin: 1px 0; }
+  .hist-detail { font-size: 20px; color: var(--gray-600); }
+
+  /* ═══════════════════════════════
+     EDIT MODAL
+  ═══════════════════════════════ */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(13,43,94,.5); z-index: 100;
+    align-items: center; justify-content: center;
+    padding: 16px;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: var(--white); border-radius: 14px;
+    padding: 18px; width: 100%; max-height: 88vh;
+    overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  }
+  .modal-title {
+    font-size: 20px; font-weight: 700; color: var(--navy);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--gray-200);
+  }
+  .modal-footer { display: flex; gap: 8px; margin-top: 12px; }
+  .modal-footer button {
+    flex: 1; padding: 9px; border: none; border-radius: 8px;
+    font-size: var(--fs); font-weight: 700;
+    font-family: var(--font); cursor: pointer; transition: all .15s;
+  }
+  .btn-modal-cancel { background: var(--gray-100); color: var(--gray-600); }
+  .btn-modal-cancel:hover { background: var(--gray-200); }
+  .btn-modal-save { background: var(--blue); color: white; box-shadow: 0 2px 8px rgba(26,86,219,.3); }
+  .btn-modal-save:hover { background: #1444b8; }
+
+  /* ═══════════════════════════════
+     TOAST
+  ═══════════════════════════════ */
+  .toast {
+    position: fixed; bottom: 14px; left: 50%;
+    transform: translateX(-50%) translateY(50px);
+    background: var(--navy); color: white;
+    padding: 10px 20px; border-radius: 20px;
+    font-size: 20px; font-weight: 600;
+    opacity: 0; transition: all .25s;
+    white-space: nowrap; z-index: 999;
+    box-shadow: 0 4px 14px rgba(0,0,0,.2);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--green); }
+  .toast.error   { background: var(--red); }
+
+  /* ═══════════════════════════════
+     SKELETON
+  ═══════════════════════════════ */
+  .skeleton {
+    background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 8px;
+  }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  .empty-state { text-align: center; color: var(--gray-400); padding: 24px 12px; font-size: 20px; }
+  .empty-state i { display: block; font-size: 20px; margin-bottom: 8px; opacity: .4; }
+
+  /* ═══════════════════════════════
+     QUOTA CARDS (Settings)
+  ═══════════════════════════════ */
+  .quota-card {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-left: 4px solid;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    transition: box-shadow .2s;
+  }
+  .quota-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.08); }
+  .sick-card     { border-left-color: var(--red); }
+  .paid-card     { border-left-color: var(--green); }
+  .unpaid-card   { border-left-color: var(--amber); }
+  .vacation-card { border-left-color: var(--blue); }
+
+  .quota-icon { font-size: 20px; flex-shrink: 0; }
+  .quota-info { flex: 1; }
+  .quota-name { font-size: 20px; font-weight: 700; color: var(--gray-800); }
+  .quota-desc { font-size: 20px; color: var(--gray-400); }
+
+  .quota-input {
+    width: 72px; padding: 8px 10px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px; font-size: 20px;
+    font-family: var(--font); font-weight: 700;
+    text-align: center; outline: none;
+    color: var(--navy); background: var(--gray-50);
+    transition: border .15s, box-shadow .15s;
+    flex-shrink: 0;
+  }
+  .quota-input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(23,70,162,.12);
+    background: var(--white);
+  }
+
+  .quota-row {
+    display: flex; justify-content: space-between;
+    align-items: center; padding: 8px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 20px;
+  }
+  .quota-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .quota-row-label { color: var(--gray-600); }
+  .quota-row-val { font-weight: 700; color: var(--navy); }
+
+  /* ═══════════════════════════════
+     FOOTER
+  ═══════════════════════════════ */
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,.55);
+    text-align: center;
+    padding: 10px 14px;
+    font-size: 20px;
+    line-height: 1.7;
+    border-top: 1px solid rgba(255,255,255,.12);
+  }
+  footer p { margin: 0; }
+  footer p:first-child { color: rgba(255,255,255,.88); font-weight: 700; font-size: 20px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     LEFT NAV RAIL
+══════════════════════════════ -->
+<nav class="nav-rail">
+  <div class="nav-logo"><i class="fas fa-calendar-check"></i></div>
+
+  <button class="nav-item active" onclick="switchTab('form')" title="บันทึกการลา">
+    <i class="fas fa-plus-circle"></i>
+    <span>บันทึก</span>
+  </button>
+
+  <button class="nav-item" onclick="switchTab('summary')" title="สรุปวันลา">
+    <i class="fas fa-chart-pie"></i>
+    <span>สรุป</span>
+  </button>
+
+  <button class="nav-item" onclick="switchTab('history')" title="ประวัติการลา">
+    <i class="fas fa-list-ul"></i>
+    <span>ประวัติ</span>
+  </button>
+
+  <div class="nav-divider"></div>
+
+  <button class="nav-item" onclick="switchTab('bonus')" title="โบนัส">
+    <i class="fas fa-star"></i>
+    <span>โบนัส</span>
+  </button>
+
+  <div class="nav-spacer"></div>
+
+  <div class="nav-divider"></div>
+
+  <button class="nav-item" onclick="switchTab('settings')" title="ตั้งค่าสิทธิ์">
+    <i class="fas fa-cog"></i>
+    <span>ตั้งค่า</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════
+     CONTENT AREA
+══════════════════════════════ -->
+<div class="content-area">
+<div class="content-scroll">
+
+  <!-- ════ PANEL: FORM ════ -->
+  <div class="panel active" id="panel-form">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-plus-circle"></i> บันทึกการลา</div>
+      <div class="panel-subtitle">กรอกรายละเอียดวันลาด้านล่าง</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="section-label">วันลาคงเหลือ</div>
+      <div class="summary-grid" id="mini-summary">
+        <div class="skeleton" style="height:66px;"></div>
+        <div class="skeleton" style="height:66px;"></div>
+        <div class="skeleton" style="height:66px;"></div>
+        <div class="skeleton" style="height:66px;"></div>
+      </div>
+
+      <div class="section-label">รายละเอียดการลา</div>
+
+      <div class="form-group">
+        <label class="form-label">วันที่ลา</label>
+        <input type="date" id="leaveDate">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ประเภทการลา</label>
+        <div class="type-grid">
+          <button class="type-btn sick selected" onclick="selectType('sick',this)">🤒 ลาป่วย</button>
+          <button class="type-btn paid"          onclick="selectType('paid',this)">💼 ลากิจจ่าย</button>
+          <button class="type-btn unpaid"        onclick="selectType('unpaid',this)">📋 ลากิจหัก</button>
+          <button class="type-btn vacation"      onclick="selectType('vacation',this)">🏖️ ลาพักร้อน</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">จำนวนวันลา</label>
+        <div class="dur-grid">
+          <button class="type-btn paid selected" id="dur-full"   onclick="selectDur('full',this)">เต็มวัน</button>
+          <button class="type-btn unpaid"        id="dur-half"   onclick="selectDur('half',this)">ครึ่งวัน</button>
+          <button class="type-btn sick"          id="dur-custom" onclick="selectDur('custom',this)">กำหนดเอง</button>
+        </div>
+        <div class="custom-hour-wrap" id="customHourWrap">
+          <div class="custom-hour-row">
+            <input type="number" class="hour-input" id="customHours" min="1" max="7" value="1" onchange="updateHourPreview()">
+            <span style="font-size: 20px;color:var(--gray-600);">ชั่วโมง</span>
+            <span class="hour-preview" id="hourPreview">= 0.125 วัน</span>
+          </div>
+          <div class="hour-note">* 8 ชั่วโมง = 1 วันทำงาน</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">หมายเหตุ / เหตุผลการลา</label>
+        <textarea id="note" placeholder="ระบุอาการหรือเหตุผล (ไม่บังคับ)"></textarea>
+      </div>
+
+      <button class="btn-primary" id="saveBtn" onclick="saveLeave()">
+        <i class="fas fa-save" style="margin-right:6px;"></i>บันทึกการลา
+      </button>
+    </div>
+  </div>
+
+  <!-- ════ PANEL: SUMMARY ════ -->
+  <div class="panel" id="panel-summary">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-chart-pie"></i> สรุปวันลา</div>
+      <div class="panel-subtitle">ภาพรวมการใช้สิทธิ์วันลาทั้งหมด</div>
+    </div>
+    <div class="panel-body">
+      <div id="full-summary">
+        <div class="skeleton" style="height:88px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:88px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:88px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:88px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ PANEL: HISTORY ════ -->
+  <div class="panel" id="panel-history">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-list-ul"></i> ประวัติการลา</div>
+      <div class="panel-subtitle">200 รายการล่าสุด</div>
+    </div>
+    <div class="panel-body">
+      <div id="history-list">
+        <div class="skeleton" style="height:56px;margin-bottom:6px;"></div>
+        <div class="skeleton" style="height:56px;margin-bottom:6px;"></div>
+        <div class="skeleton" style="height:56px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ PANEL: BONUS ════ -->
+  <div class="panel" id="panel-bonus">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-star"></i> โบนัสประจำปี</div>
+      <div class="panel-subtitle">คำนวณจากวันลาป่วย ลากิจจ่าย และลากิจหัก</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="bonus-hero" id="bonusHero">
+        <div class="bonus-subtitle">ผลโบนัสของคุณ</div>
+        <div class="bonus-pct" id="bonusPct">—</div>
+        <div class="bonus-pct-label">เปอร์เซ็นต์โบนัส</div>
+        <div class="bonus-badge" id="bonusLevelBadge">กำลังโหลด...</div>
+        <div class="bonus-desc" id="bonusDesc"></div>
+      </div>
+
+      <div class="bonus-prog-wrap">
+        <div class="bonus-prog-fill fill-A" id="bonusBar" style="width:0%"></div>
+      </div>
+      <div class="prog-labels">
+        <span>0%</span><span>50%</span><span>75%</span><span>100%</span>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-num" id="bSick">—</div><div class="stat-lbl">ลาป่วย (วัน)</div></div>
+        <div class="stat-box"><div class="stat-num" id="bPaid">—</div><div class="stat-lbl">ลากิจจ่าย</div></div>
+        <div class="stat-box"><div class="stat-num" id="bUnpaid">—</div><div class="stat-lbl">ลากิจหัก</div></div>
+      </div>
+      <div style="font-size: 20px;color:var(--gray-400);text-align:center;margin-bottom:12px;">
+        * ไม่รวมลาพักร้อนในการคำนวณโบนัส
+      </div>
+
+      <div class="section-label">เงื่อนไขโบนัส</div>
+      <div class="cond-list">
+        <div class="cond-item c-A"><span class="cond-text">≤ 6 วัน</span><span class="cond-badge">100% 🏆</span></div>
+        <div class="cond-item c-B"><span class="cond-text">≤ 8 วัน</span><span class="cond-badge">75% ⭐</span></div>
+        <div class="cond-item c-C"><span class="cond-text">≤ 10 วัน</span><span class="cond-badge">50% 📊</span></div>
+        <div class="cond-item c-D"><span class="cond-text">&gt; 10 วัน</span><span class="cond-badge">0% ❌</span></div>
+      </div>
+
+      <button class="btn-outline" onclick="loadBonus()"><i class="fas fa-sync-alt" style="margin-right:6px;font-size: 20px;"></i>รีเฟรชข้อมูล</button>
+      <button class="btn-green" id="saveBonusBtn" onclick="saveBonusHistory()"><i class="fas fa-save" style="margin-right:6px;font-size: 20px;"></i>บันทึกประวัติโบนัส</button>
+
+      <div class="section-label" style="margin-top:14px;">ประวัติการคำนวณ</div>
+      <div id="bonusHistList"><div class="empty-state"><i class="fas fa-history"></i>กำลังโหลด...</div></div>
+    </div>
+  </div>
+
+  <!-- ════ PANEL: SETTINGS ════ -->
+  <div class="panel" id="panel-settings">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-cog"></i> ตั้งค่าสิทธิ์วันลา</div>
+      <div class="panel-subtitle">กำหนดจำนวนสิทธิ์วันลาประจำปี</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="section-label">สิทธิ์วันลาประจำปี</div>
+
+      <!-- Info box -->
+      <div style="background:var(--blue-xlt);border:1px solid var(--blue-lt);border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;">
+        <i class="fas fa-info-circle" style="color:var(--blue);font-size: 20px;margin-top:2px;flex-shrink:0;"></i>
+        <div style="font-size: 20px;color:var(--gray-600);line-height:1.6;">
+          ค่าที่ตั้งจะถูกบันทึกลงในชีต <strong style="color:var(--navy);">"data"</strong> แถว 2 และใช้คำนวณวันลาคงเหลือทั้งหมด
+        </div>
+      </div>
+
+      <!-- Quota input cards -->
+      <div class="quota-card sick-card">
+        <div class="quota-icon">🤒</div>
+        <div class="quota-info">
+          <div class="quota-name">ลาป่วย</div>
+          <div class="quota-desc">วัน / ปี</div>
+        </div>
+        <input type="number" class="quota-input" id="qs-sick" min="0" step="0.5" placeholder="30">
+      </div>
+
+      <div class="quota-card paid-card">
+        <div class="quota-icon">💼</div>
+        <div class="quota-info">
+          <div class="quota-name">ลากิจจ่าย</div>
+          <div class="quota-desc">วัน / ปี</div>
+        </div>
+        <input type="number" class="quota-input" id="qs-paid" min="0" step="0.5" placeholder="6">
+      </div>
+
+      <div class="quota-card unpaid-card">
+        <div class="quota-icon">📋</div>
+        <div class="quota-info">
+          <div class="quota-name">ลากิจหัก</div>
+          <div class="quota-desc">ใส่ 999 = ไม่จำกัด</div>
+        </div>
+        <input type="number" class="quota-input" id="qs-unpaid" min="0" step="0.5" placeholder="999">
+      </div>
+
+      <div class="quota-card vacation-card">
+        <div class="quota-icon">🏖️</div>
+        <div class="quota-info">
+          <div class="quota-name">ลาพักร้อน</div>
+          <div class="quota-desc">วัน / ปี</div>
+        </div>
+        <input type="number" class="quota-input" id="qs-vacation" min="0" step="0.5" placeholder="6">
+      </div>
+
+      <button class="btn-primary" id="saveQuotaBtn" onclick="saveQuotaInline()" style="margin-top:16px;">
+        <i class="fas fa-save" style="margin-right:8px;font-size: 20px;"></i>บันทึกสิทธิ์วันลา
+      </button>
+
+      <!-- Current quota summary -->
+      <div class="section-label" style="margin-top:18px;">สิทธิ์ปัจจุบัน</div>
+      <div id="quota-summary" style="background:var(--white);border:1px solid var(--gray-200);border-radius:10px;padding:12px 14px;">
+        <div class="skeleton" style="height:20px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:20px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:20px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:20px;"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end content-scroll -->
+
+  <footer>
+    <p>ตรวจสอบสิทธิ์คงเหลือวันลา © 2026 | พัฒนาโดย Sarawut.C</p>
+    <p>สําหรับใช้ส่วนตัวเท่านั้น</p>
+  </footer>
+
+</div><!-- end content-area -->
+
+<!-- ══════════════════════════════
+     EDIT MODAL
+══════════════════════════════ -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-title"><i class="fas fa-edit" style="color:var(--blue);"></i> แก้ไขรายการลา</div>
+
+    <div class="form-group">
+      <label class="form-label">วันที่</label>
+      <input type="text" id="editDate" disabled style="width:100%;padding:8px 10px;border:1.5px solid var(--gray-200);border-radius:8px;background:var(--gray-100);font-size: 20px;font-family:inherit;color:var(--gray-400);">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">ประเภทการลา</label>
+      <div class="type-grid">
+        <button class="type-btn sick"     id="et-sick"     onclick="selectEditType('sick',this)">🤒 ลาป่วย</button>
+        <button class="type-btn paid"     id="et-paid"     onclick="selectEditType('paid',this)">💼 ลากิจจ่าย</button>
+        <button class="type-btn unpaid"   id="et-unpaid"   onclick="selectEditType('unpaid',this)">📋 ลากิจหัก</button>
+        <button class="type-btn vacation" id="et-vacation" onclick="selectEditType('vacation',this)">🏖️ ลาพักร้อน</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">จำนวนวันลา</label>
+      <div class="dur-grid">
+        <button class="type-btn paid selected" id="ed-full"   onclick="selectEditDur('full',this)">เต็มวัน</button>
+        <button class="type-btn unpaid"        id="ed-half"   onclick="selectEditDur('half',this)">ครึ่งวัน</button>
+        <button class="type-btn sick"          id="ed-custom" onclick="selectEditDur('custom',this)">กำหนดเอง</button>
+      </div>
+      <div class="custom-hour-wrap" id="editCustomHourWrap">
+        <div class="custom-hour-row">
+          <input type="number" class="hour-input" id="editCustomHours" min="1" max="7" value="1" onchange="updateEditHourPreview()">
+          <span style="font-size: 20px;color:var(--gray-600);">ชั่วโมง</span>
+          <span class="hour-preview" id="editHourPreview">= 0.125 วัน</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <textarea id="editNote" style="width:100%;height:60px;padding:8px 10px;border:1.5px solid var(--gray-200);border-radius:8px;font-size: 20px;font-family:inherit;resize:none;outline:none;"></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeEditModal()">ยกเลิก</button>
+      <button class="btn-modal-save"   onclick="submitEdit()"><i class="fas fa-save" style="margin-right:4px;"></i>บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let selectedType    = 'sick';
+  let selectedDur     = 'full';
+  let summaryData     = null;
+  let bonusData       = null;
+  let editRowIndex    = null;
+  let selectedEditType = 'sick';
+  let selectedEditDur  = 'full';
+
+  // ── Init ──
+  document.getElementById('leaveDate').value = new Date().toISOString().split('T')[0];
+  loadSummary();
+
+  // ── Tab switch ──
+  function switchTab(tab) {
+    const names = ['form','summary','history','bonus','settings'];
+    document.querySelectorAll('.nav-item').forEach((el, i) => {
+      el.classList.toggle('active', names[i] === tab);
+    });
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+    if (tab === 'summary')  renderFullSummary();
+    if (tab === 'history')  loadHistory();
+    if (tab === 'bonus')    loadBonus();
+    if (tab === 'settings') loadQuotaSettings();
+  }
+
+  // ── Type select ──
+  function selectType(type, el) {
+    selectedType = type;
+    document.querySelectorAll('.panel#panel-form .type-grid .type-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ── Duration select ──
+  function selectDur(dur, el) {
+    selectedDur = dur;
+    document.querySelectorAll('#dur-full,#dur-half,#dur-custom').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('customHourWrap').style.display = dur === 'custom' ? 'block' : 'none';
+    if (dur === 'custom') updateHourPreview();
+  }
+
+  function updateHourPreview() {
+    const h = Math.min(7, Math.max(1, Number(document.getElementById('customHours').value) || 1));
+    document.getElementById('customHours').value = h;
+    document.getElementById('hourPreview').textContent = `= ${(h/8).toFixed(3).replace(/\.?0+$/,'')} วัน`;
+  }
+
+  function getDays() {
+    if (selectedDur === 'full') return 1;
+    if (selectedDur === 'half') return 0.5;
+    const h = Number(document.getElementById('customHours').value) || 1;
+    return Math.round((h / 8) * 1000) / 1000;
+  }
+
+  // ── Summary ──
+  function loadSummary() {
+    google.script.run
+      .withSuccessHandler(data => { summaryData = data; renderMiniSummary(data); })
+      .withFailureHandler(() => showToast('โหลดข้อมูลไม่สำเร็จ','error'))
+      .getSummary();
+  }
+
+  function renderMiniSummary(data) {
+    if (!data) {
+      document.getElementById('mini-summary').innerHTML = '<div class="empty-state" style="grid-column:span 2"><i class="fas fa-exclamation-circle"></i>ไม่พบข้อมูล</div>';
+      return;
+    }
+    const { quota, used, remaining } = data;
+    document.getElementById('mini-summary').innerHTML = `
+      <div class="s-card sick">
+        <div class="s-icon">🤒</div>
+        <div class="s-label">ลาป่วย</div>
+        <div class="s-value">${fmt(remaining.sick)}</div>
+        <div class="s-sub">ใช้ ${fmt(used.sick)}/${quota.sick} วัน</div>
+      </div>
+      <div class="s-card paid">
+        <div class="s-icon">💼</div>
+        <div class="s-label">ลากิจจ่าย</div>
+        <div class="s-value">${fmt(remaining.paid)}</div>
+        <div class="s-sub">ใช้ ${fmt(used.paid)}/${quota.paidLeave} วัน</div>
+      </div>
+      <div class="s-card unpaid">
+        <div class="s-icon">📋</div>
+        <div class="s-label">ลากิจหัก</div>
+        <div class="s-value">${fmt(used.unpaid)}</div>
+        <div class="s-sub">ใช้ไป / ${quota.unpaidLeave >= 999 ? 'ไม่จำกัด' : quota.unpaidLeave + ' วัน'}</div>
+      </div>
+      <div class="s-card vacation">
+        <div class="s-icon">🏖️</div>
+        <div class="s-label">ลาพักร้อน</div>
+        <div class="s-value">${fmt(remaining.vacation)}</div>
+        <div class="s-sub">ใช้ ${fmt(used.vacation)}/${quota.vacation} วัน</div>
+      </div>`;
+  }
+
+  function renderFullSummary() {
+    if (!summaryData) { loadSummary(); return; }
+    const { quota, used, remaining } = summaryData;
+    const cards = [
+      { cls:'sick',     icon:'🤒', label:'ลาป่วย',     q:quota.sick,       u:used.sick,     r:remaining.sick,     color:'#dc2626' },
+      { cls:'paid',     icon:'💼', label:'ลากิจจ่าย', q:quota.paidLeave,  u:used.paid,     r:remaining.paid,     color:'#16a34a' },
+      { cls:'unpaid',   icon:'📋', label:'ลากิจหัก',   q:null,             u:used.unpaid,   r:null,               color:'#d97706' },
+      { cls:'vacation', icon:'🏖️', label:'ลาพักร้อน',  q:quota.vacation,   u:used.vacation, r:remaining.vacation, color:'#1a56db' },
+    ];
+    document.getElementById('full-summary').innerHTML = cards.map(c => {
+      const pct = c.q && c.q > 0 ? Math.min(100, (c.u / c.q) * 100) : null;
+      return `
+      <div class="full-card">
+        <div class="full-card-header">
+          <div class="full-card-title" style="color:${c.color};">${c.icon} ${c.label}</div>
+          <div class="full-card-quota">${c.q ? 'สิทธิ์ ' + c.q + ' วัน' : 'ไม่จำกัด'}</div>
+        </div>
+        <div class="full-card-nums">
+          <div>
+            <div class="fc-num-label">ใช้ไปแล้ว</div>
+            <div class="fc-num-val" style="color:${c.color};">${fmt(c.u)}</div>
+          </div>
+          ${c.r !== null ? `<div>
+            <div class="fc-num-label">คงเหลือ</div>
+            <div class="fc-num-val" style="color:var(--gray-800);">${fmt(c.r)}</div>
+          </div>` : ''}
+        </div>
+        ${pct !== null ? `<div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${c.color};opacity:.7;"></div></div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  // ── History ──
+  function loadHistory() {
+    document.getElementById('history-list').innerHTML =
+      '<div class="skeleton" style="height:56px;margin-bottom:6px;"></div>'.repeat(5);
+    google.script.run
+      .withSuccessHandler(renderHistory)
+      .withFailureHandler(() => { document.getElementById('history-list').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i>โหลดไม่สำเร็จ</div>'; })
+      .getAllLeaves();
+  }
+
+  function renderHistory(list) {
+    const typeClass = { 'ลาป่วย':'sick','ลากิจจ่าย':'paid','ลากิจหัก':'unpaid','ลาพักร้อน':'vacation' };
+    if (!list || !list.length) {
+      document.getElementById('history-list').innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>ยังไม่มีประวัติการลา</div>';
+      return;
+    }
+    document.getElementById('history-list').innerHTML = list.map(r => {
+      const type = r.sick ? 'ลาป่วย' : r.paid ? 'ลากิจจ่าย' : r.unpaid ? 'ลากิจหัก' : 'ลาพักร้อน';
+      return `
+      <div class="history-item ${typeClass[type]||''}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="flex:1;min-width:0;">
+            <div class="hi-date">${r.date}</div>
+            <div class="hi-type">${r.typeLabel || type}</div>
+            ${r.note ? `<div class="hi-note">📝 ${r.note}</div>` : ''}
+          </div>
+          <div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px;">
+            <button class="action-btn btn-edit" onclick='openEditModal(${JSON.stringify(r)})'>✏️ แก้</button>
+            <button class="action-btn btn-delete" onclick="confirmDelete(${r.rowIndex})">🗑️</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Edit Modal ──
+  function openEditModal(r) {
+    editRowIndex = r.rowIndex;
+    document.getElementById('editDate').value = r.date;
+
+    const type = r.sick ? 'sick' : r.paid ? 'paid' : r.unpaid ? 'unpaid' : 'vacation';
+    selectedEditType = type;
+    ['sick','paid','unpaid','vacation'].forEach(t => {
+      document.getElementById('et-' + t).classList.toggle('selected', t === type);
+    });
+
+    const days = r.sick || r.paid || r.unpaid || r.vacation;
+    if (days === 1)        selectEditDur('full', document.getElementById('ed-full'));
+    else if (days === 0.5) selectEditDur('half', document.getElementById('ed-half'));
+    else {
+      selectEditDur('custom', document.getElementById('ed-custom'));
+      document.getElementById('editCustomHours').value = Math.round(days * 8);
+      updateEditHourPreview();
+    }
+
+    document.getElementById('editNote').value = r.note || '';
+    document.getElementById('editModal').classList.add('open');
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').classList.remove('open');
+  }
+
+  function selectEditType(type, el) {
+    selectedEditType = type;
+    document.querySelectorAll('#et-sick,#et-paid,#et-unpaid,#et-vacation').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectEditDur(dur, el) {
+    selectedEditDur = dur;
+    document.querySelectorAll('#ed-full,#ed-half,#ed-custom').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('editCustomHourWrap').style.display = dur === 'custom' ? 'block' : 'none';
+  }
+
+  function updateEditHourPreview() {
+    const h = Math.min(7, Math.max(1, Number(document.getElementById('editCustomHours').value) || 1));
+    document.getElementById('editCustomHours').value = h;
+    document.getElementById('editHourPreview').textContent = `= ${(h/8).toFixed(3).replace(/\.?0+$/,'')} วัน`;
+  }
+
+  function getEditDays() {
+    if (selectedEditDur === 'full') return 1;
+    if (selectedEditDur === 'half') return 0.5;
+    const h = Number(document.getElementById('editCustomHours').value) || 1;
+    return Math.round((h / 8) * 1000) / 1000;
+  }
+
+  function submitEdit() {
+    google.script.run
+      .withSuccessHandler(msg => {
+        showToast(msg, 'success');
+        closeEditModal();
+        summaryData = null; bonusData = null;
+        loadHistory(); loadSummary();
+      })
+      .withFailureHandler(err => showToast('❌ ' + err.message, 'error'))
+      .updateLeave(editRowIndex, {
+        type: selectedEditType,
+        days: getEditDays(),
+        note: document.getElementById('editNote').value.trim(),
+      });
+  }
+
+  function confirmDelete(rowIndex) {
+    if (!confirm('ต้องการลบรายการนี้ใช่ไหมครับ?')) return;
+    google.script.run
+      .withSuccessHandler(msg => {
+        showToast(msg, 'success');
+        summaryData = null; bonusData = null;
+        loadHistory(); loadSummary();
+      })
+      .withFailureHandler(err => showToast('❌ ' + err.message, 'error'))
+      .deleteLeave(rowIndex);
+  }
+
+  // ── Bonus ──
+  function loadBonus() {
+    document.getElementById('bonusPct').textContent = '...';
+    document.getElementById('bonusLevelBadge').textContent = 'กำลังโหลด...';
+    document.getElementById('bonusDesc').textContent = '';
+    google.script.run
+      .withSuccessHandler(data => { bonusData = data; renderBonus(data); loadBonusHistory(); })
+      .withFailureHandler(() => showToast('โหลดข้อมูลโบนัสไม่สำเร็จ','error'))
+      .getBonusFromSheet();
+  }
+
+  function renderBonus(data) {
+    if (!data) {
+      document.getElementById('bonusPct').textContent = '—';
+      document.getElementById('bonusLevelBadge').textContent = 'ไม่พบข้อมูล';
+      return;
+    }
+    const { bonusPercentage, bonusLevel, description, used } = data;
+    document.getElementById('bonusPct').textContent = bonusPercentage + '%';
+    document.getElementById('bonusLevelBadge').textContent = '🏅 ระดับ ' + bonusLevel;
+    document.getElementById('bonusDesc').textContent = description;
+
+    const bar = document.getElementById('bonusBar');
+    bar.style.width = bonusPercentage + '%';
+    bar.className = 'bonus-prog-fill fill-' + bonusLevel;
+
+    const heroColors = {
+      A: 'linear-gradient(135deg, #14532d, #16a34a)',
+      B: 'linear-gradient(135deg, #78350f, #d97706)',
+      C: 'linear-gradient(135deg, #7c2d12, #ea580c)',
+      D: 'linear-gradient(135deg, #7f1d1d, #dc2626)'
+    };
+    document.getElementById('bonusHero').style.background = heroColors[bonusLevel] || `linear-gradient(135deg, var(--navy), var(--blue-mid))`;
+
+    document.getElementById('bSick').textContent   = fmt(used.sick);
+    document.getElementById('bPaid').textContent   = fmt(used.paid);
+    document.getElementById('bUnpaid').textContent = fmt(used.unpaid);
+  }
+
+  function saveBonusHistory() {
+    if (!bonusData) { showToast('⚠️ โหลดข้อมูลก่อนบันทึก','error'); return; }
+    const btn = document.getElementById('saveBonusBtn');
+    btn.disabled = true; btn.textContent = '⏳ กำลังบันทึก...';
+    google.script.run
+      .withSuccessHandler(res => {
+        showToast(res.message, 'success');
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save" style="margin-right:6px;font-size: 20px;"></i>บันทึกประวัติโบนัส';
+        loadBonusHistory();
+      })
+      .withFailureHandler(err => {
+        showToast('❌ ' + err.message, 'error');
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save" style="margin-right:6px;font-size: 20px;"></i>บันทึกประวัติโบนัส';
+      })
+      .saveBonusCalculation({
+        sickLeave:         bonusData.used.sick,
+        paidLeave:         bonusData.used.paid,
+        deductLeave:       bonusData.used.unpaid,
+        vacationLeave:     bonusData.used.vacation,
+        totalLeaveForBonus:bonusData.totalForBonus,
+        bonusPercentage:   bonusData.bonusPercentage,
+        bonusLevel:        bonusData.bonusLevel
+      });
+  }
+
+  function loadBonusHistory() {
+    google.script.run
+      .withSuccessHandler(list => {
+        const colors = { A:'#16a34a', B:'#d97706', C:'#ea580c', D:'#dc2626' };
+        document.getElementById('bonusHistList').innerHTML = !list || !list.length
+          ? '<div class="empty-state"><i class="fas fa-history"></i>ยังไม่มีประวัติ</div>'
+          : list.slice(0,5).map(h => `
+            <div class="hist-item" style="border-left-color:${colors[h.bonusLevel]||'var(--blue)'};">
+              <div class="hist-time">${h.timestamp}</div>
+              <div class="hist-level" style="color:${colors[h.bonusLevel]||'var(--blue)'};">ระดับ ${h.bonusLevel} — ${h.bonusPercentage}</div>
+              <div class="hist-detail">รวมลา ${h.totalLeave} วัน (ป่วย ${h.sickLeave} + จ่าย ${h.paidLeave} + หัก ${h.deductLeave})</div>
+            </div>`).join('');
+      })
+      .getCalculationHistory();
+  }
+
+  // ── Save leave ──
+  function saveLeave() {
+    const date = document.getElementById('leaveDate').value;
+    if (!date) { showToast('⚠️ กรุณาเลือกวันที่ลา','error'); return; }
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i>กำลังบันทึก...';
+
+    google.script.run
+      .withSuccessHandler(msg => {
+        showToast(msg, 'success');
+        document.getElementById('note').value = '';
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save" style="margin-right:6px;"></i>บันทึกการลา';
+        summaryData = null; bonusData = null;
+        loadSummary();
+      })
+      .withFailureHandler(err => {
+        showToast('❌ ' + err.message, 'error');
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save" style="margin-right:6px;"></i>บันทึกการลา';
+      })
+      .saveLeave({
+        date: date,
+        type: selectedType,
+        days: getDays(),
+        note: document.getElementById('note').value.trim(),
+      });
+  }
+
+  // ── Settings: Load Quota ──
+  function loadQuotaSettings() {
+    google.script.run
+      .withSuccessHandler(q => {
+        document.getElementById('qs-sick').value    = q.sick;
+        document.getElementById('qs-paid').value    = q.paidLeave;
+        document.getElementById('qs-unpaid').value  = q.unpaidLeave;
+        document.getElementById('qs-vacation').value = q.vacation;
+        renderQuotaSummary(q);
+      })
+      .withFailureHandler(() => showToast('โหลดข้อมูลสิทธิ์ไม่สำเร็จ','error'))
+      .getQuota();
+  }
+
+  function renderQuotaSummary(q) {
+    const items = [
+      { icon:'🤒', label:'ลาป่วย',     val: q.sick },
+      { icon:'💼', label:'ลากิจจ่าย', val: q.paidLeave },
+      { icon:'📋', label:'ลากิจหัก',   val: q.unpaidLeave >= 999 ? 'ไม่จำกัด' : q.unpaidLeave },
+      { icon:'🏖️', label:'ลาพักร้อน',  val: q.vacation },
+    ];
+    document.getElementById('quota-summary').innerHTML = items.map(it => `
+      <div class="quota-row">
+        <span class="quota-row-label">${it.icon} ${it.label}</span>
+        <span class="quota-row-val">${it.val} ${typeof it.val === 'number' ? 'วัน' : ''}</span>
+      </div>`).join('');
+  }
+
+  function saveQuotaInline() {
+    const sick     = Number(document.getElementById('qs-sick').value);
+    const paid     = Number(document.getElementById('qs-paid').value);
+    const unpaid   = Number(document.getElementById('qs-unpaid').value);
+    const vacation = Number(document.getElementById('qs-vacation').value);
+
+    if (!sick && !paid && !vacation) { showToast('⚠️ กรุณากรอกข้อมูลสิทธิ์','error'); return; }
+
+    const btn = document.getElementById('saveQuotaBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px;font-size: 20px;"></i>กำลังบันทึก...';
+
+    google.script.run
+      .withSuccessHandler(msg => {
+        showToast(msg, 'success');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save" style="margin-right:8px;font-size: 20px;"></i>บันทึกสิทธิ์วันลา';
+        renderQuotaSummary({ sick, paidLeave: paid, unpaidLeave: unpaid, vacation });
+        summaryData = null;
+        loadSummary(); // refresh mini-summary ใน tab บันทึก
+      })
+      .withFailureHandler(err => {
+        showToast('❌ ' + err.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save" style="margin-right:8px;font-size: 20px;"></i>บันทึกสิทธิ์วันลา';
+      })
+      .saveQuota({ sick, paidLeave: paid, unpaidLeave: unpaid, vacation });
+  }
+
+  // ── Toast ──
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = 'toast show ' + (type||'');
+    setTimeout(() => { t.className = 'toast'; }, 3000);
+  }
+
+  function fmt(n) { return Number.isInteger(n) ? n : Number(n).toFixed(1); }
+</script>
+</body>
+</html>
